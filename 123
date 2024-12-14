@@ -1,0 +1,172 @@
+import pandas as pd
+import random
+
+#Данные фондового рынка
+stock_data = {
+    "Дата": pd.date_range(start="2023-01-01", periods=730, freq="D"),
+    "Компания": random.choices(["AAPL", "MSFT", "GOOG", "AMZN", "TSLA"], k=730),
+    "Открытие": [random.uniform(100, 400) for _ in range(730)],
+    "Закрытие": [random.uniform(100, 400) for _ in range(730)],
+    "Объем": [random.randint(500_000, 5_000_000) for _ in range(730)]
+}
+stock_df = pd.DataFrame(stock_data)
+
+print("\n=== Анализ фондового рынка ===")
+print("1. Первые строки набора данных:")
+print(stock_df.head(10))
+
+print("\n2. Сводная статистика:")
+print(stock_df.describe().applymap(lambda x: f"{x:.2f}"))
+
+print("\n3. Средняя цена закрытия:")
+print(f"${stock_df['Закрытие'].mean():.2f}")
+
+print("\n4. Общий объем торгов:")
+print(f"{stock_df['Объем'].sum():,}")
+
+print("\n5. Дни с наибольшим объемом торгов:")
+print(stock_df[stock_df["Объем"] == stock_df["Объем"].max()])
+
+print("\n6. Количество записей по компаниям:")
+print(stock_df["Компания"].value_counts())
+
+print("\n7. Средний объем торгов по компаниям:")
+print(stock_df.groupby("Компания")["Объем"].mean())
+
+print("\n8. Дни с ценой закрытия выше средней:")
+print(stock_df[stock_df["Закрытие"] > stock_df["Закрытие"].mean()])
+
+print("\n9. Самые высокие и низкие цены открытия:")
+print(stock_df["Открытие"].agg(["max", "min"]))
+
+print("\n10. День с наибольшей разницей цен (Закрытие - Открытие):")
+stock_df["Разница цен"] = abs(stock_df["Закрытие"] - stock_df["Открытие"])
+print(stock_df[stock_df["Разница цен"] == stock_df["Разница цен"].max()])
+
+print("\n11. Топ-5 дней с наибольшим объемом торгов:")
+print(stock_df.nlargest(5, "Объем"))
+
+print("\n12. Количество дней с ценой закрытия выше 300:")
+print(len(stock_df[stock_df["Закрытие"] > 300]))
+
+print("\n13. Средняя разница между открытием и закрытием по компаниям:")
+print(stock_df.groupby("Компания")["Разница цен"].mean())
+
+print("\n14. Дни с минимальным объемом торгов для каждой компании:")
+print(stock_df.loc[stock_df.groupby("Компания")["Объем"].idxmin()])
+
+print("\n15. Сколько дней цены закрытия были выше цены открытия:")
+print(len(stock_df[stock_df["Закрытие"] > stock_df["Открытие"]]))
+
+#Статистика COVID-19
+countries = ["США", "Индия", "Бразилия", "Германия", "Великобритания", "Франция"]
+covid_data = {
+    "Дата": pd.date_range(start="2023-01-01", periods=730, freq="D"),
+    "Страна": random.choices(countries, k=730),
+    "Новые случаи": [random.randint(1_000, 50_000) for _ in range(730)],
+    "Смерти": [random.randint(10, 1_000) for _ in range(730)],
+    "Выздоровления": [random.randint(500, 40_000) for _ in range(730)]
+}
+covid_df = pd.DataFrame(covid_data)
+
+print("\n=== Анализ данных COVID-19 ===")
+print("1. Первые строки набора данных:")
+print(covid_df.head(10))
+
+print("\n2. Общее количество случаев во всех странах:")
+print(f"{covid_df['Новые случаи'].sum():,}")
+
+print("\n3. Среднее количество смертей в день:")
+print(f"{covid_df['Смерти'].mean():.2f}")
+
+print("\n4. Страны с самым высоким уровнем выздоровления:")
+covid_df["Уровень выздоровления"] = covid_df["Выздоровления"] / covid_df["Новые случаи"]
+print(covid_df[covid_df["Уровень выздоровления"] == covid_df["Уровень выздоровления"].max()])
+
+print("\n5. Страна с наибольшим количеством случаев:")
+print(covid_df.groupby("Страна")["Новые случаи"].sum().idxmax())
+
+print("\n6. Общее количество смертей по странам:")
+print(covid_df.groupby("Страна")["Смерти"].sum())
+
+print("\n7. Среднее количество новых случаев по странам:")
+print(covid_df.groupby("Страна")["Новые случаи"].mean())
+
+print("\n8. Дни с количеством смертей выше среднего:")
+print(covid_df[covid_df["Смерти"] > covid_df["Смерти"].mean()])
+
+print("\n9. Дата с наибольшим количеством выздоровлений:")
+print(covid_df[covid_df["Выздоровления"] == covid_df["Выздоровления"].max()])
+
+print("\n10. Топ-5 стран с наибольшим количеством смертей:")
+print(covid_df.groupby("Страна")["Смерти"].sum().nlargest(5))
+
+print("\n11. Средний уровень выздоровлений по странам:")
+print(covid_df.groupby("Страна")["Уровень выздоровления"].mean())
+
+print("\n12. Дни с количеством новых случаев ниже 10 000:")
+print(covid_df[covid_df["Новые случаи"] < 10_000])
+
+print("\n13. Количество дней с выздоровлениями выше 30 000:")
+print(len(covid_df[covid_df["Выздоровления"] > 30_000]))
+
+print("\n14. Среднее количество смертей на день для каждой страны:")
+print(covid_df.groupby("Страна")["Смерти"].mean())
+
+print("\n15. Количество дней с новым уровнем выздоровлений выше среднего:")
+print(len(covid_df[covid_df["Уровень выздоровления"] > covid_df["Уровень выздоровления"].mean()]))
+
+#Климатические данные
+climate_data = {
+    "Город": random.choices(["Нью-Йорк", "Лос-Анджелес", "Чикаго", "Хьюстон", "Сиэтл", "Майами"], k=730),
+    "Температура (C)": [random.uniform(-10, 35) for _ in range(730)],
+    "Влажность (%)": [random.randint(30, 100) for _ in range(730)],
+    "Индекс качества воздуха": [random.randint(10, 150) for _ in range(730)]
+}
+climate_df = pd.DataFrame(climate_data)
+
+print("\n=== Анализ климатических данных ===")
+print("1. Первые строки набора данных:")
+print(climate_df.head(10))
+
+print("\n2. Средняя температура:")
+print(f"{climate_df['Температура (C)'].mean():.2f}°C")
+
+print("\n3. Город с самой высокой влажностью:")
+print(climate_df[climate_df["Влажность (%)"] == climate_df["Влажность (%)"].max()])
+
+print("\n4. Сводка индекса качества воздуха:")
+print(climate_df["Индекс качества воздуха"].describe().apply(lambda x: f"{x:.2f}"))
+
+print("\n5. Количество записей по городам:")
+print(climate_df["Город"].value_counts())
+
+print("\n6. Средняя температура по городам:")
+print(climate_df.groupby("Город")["Температура (C)"].mean())
+
+print("\n7. Дни с температурами ниже 0°C:")
+print(climate_df[climate_df["Температура (C)"] < 0])
+
+print("\n8. Город с худшим качеством воздуха:")
+print(climate_df[climate_df["Индекс качества воздуха"] == climate_df["Индекс качества воздуха"].max()])
+
+print("\n9. Дни с влажностью выше 90%:")
+print(climate_df[climate_df["Влажность (%)"] > 90])
+
+print("\n10. Средняя влажность по городам:")
+print(climate_df.groupby("Город")["Влажность (%)"].mean())
+
+print("\n11. Дни с индексом качества воздуха ниже 50:")
+print(climate_df[climate_df["Индекс качества воздуха"] < 50])
+
+print("\n12. Максимальная температура для каждого города:")
+print(climate_df.groupby("Город")["Температура (C)"].max())
+
+print("\n13. Количество дней с температурой выше 30°C:")
+print(len(climate_df[climate_df["Температура (C)"] > 30]))
+
+print("\n14. Город с самой низкой средней температурой:")
+print(climate_df.groupby("Город")["Температура (C)"].mean().idxmin())
+
+print("\n15. Топ-5 дней с самой низкой влажностью:")
+print(climate_df.nsmallest(5, "Влажность (%)"))
